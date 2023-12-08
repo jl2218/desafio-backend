@@ -21,6 +21,7 @@ public class Vehicle {
     private String model;
     @NotBlank
     private String color;
+    @Column(unique = true)
     @NotBlank
     private String plate;
     @NotBlank
