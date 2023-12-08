@@ -44,7 +44,8 @@ public class EstablishmentService implements EstablishmentUseCase {
 
     @Override
     public String deleteEstablishment(Long id) {
-        Establishment establishmentToBeDeleted = establishmentRepository.findById(id).orElseThrow();
+        Establishment establishmentToBeDeleted = establishmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
         try {
             establishmentRepository.delete(establishmentToBeDeleted);
             return "Establishment deleted successfully";
