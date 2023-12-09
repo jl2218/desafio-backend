@@ -30,6 +30,7 @@ public class VehicleControlService implements VehicleControlUseCase {
         } else {
             establishment.setMotorcycleParkingLots(establishment.getMotorcycleParkingLots() -1);
         }
+        establishment.addEntry();
         establishmentRepository.save(establishment);
         return establishment;
     }
@@ -46,7 +47,22 @@ public class VehicleControlService implements VehicleControlUseCase {
         } else {
             establishment.setMotorcycleParkingLots(establishment.getMotorcycleParkingLots() + 1);
         }
+        establishment.addExit();
         establishmentRepository.save(establishment);
         return establishment;
+    }
+
+    @Override
+    public String entriesSummary(String establishmentDocument) {
+        Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
+                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
+        return "No período total foram contabilizadas " + establishment.getEntries() + " entradas";
+    }
+
+    @Override
+    public String exitsSummary(String establishmentDocument) {
+        Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
+                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
+        return "No período total foram contabilizadas " + establishment.getExits() + " saídas";
     }
 }

@@ -30,4 +30,22 @@ public class VehicleControlController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
         }
     }
+
+    @GetMapping("/entries/summary")
+    public ResponseEntity<?> entriesSummary(@RequestParam String establishmentDocument) {
+        try {
+            return new ResponseEntity<>(vehicleControlService.entriesSummary(establishmentDocument), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
+        }
+    }
+
+    @GetMapping("/exits/summary")
+    public ResponseEntity<?> exitsSummary(@RequestParam String establishmentDocument) {
+        try {
+            return new ResponseEntity<>(vehicleControlService.exitsSummary(establishmentDocument), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
+        }
+    }
 }

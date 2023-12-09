@@ -1,7 +1,7 @@
 package joao.dev.desafiobackendfcamara.domain.establishment;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import joao.dev.desafiobackendfcamara.domain.address.Address;
 import joao.dev.desafiobackendfcamara.domain.dtos.EstablishmentDTO;
@@ -40,6 +40,10 @@ public class Establishment {
     private int carParkingLots;
     @OneToMany
     private List<Vehicle> parkedVehicles = new ArrayList<>();
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private int entries;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private int exits;
 
     public Establishment(EstablishmentDTO data) {
         this.name = data.name();
@@ -48,5 +52,15 @@ public class Establishment {
         this.phoneNumber = data.phoneNumber();
         this.motorcycleParkingLots = data.motorcycleParkingLots();
         this.carParkingLots = data.carParkingLots();
+    }
+
+    public void addEntry() {
+        int entries = this.entries + 1;
+        this.setEntries(entries);
+    }
+
+    public void addExit() {
+        int exits = this.exits + 1;
+        this.setExits(exits);
     }
 }

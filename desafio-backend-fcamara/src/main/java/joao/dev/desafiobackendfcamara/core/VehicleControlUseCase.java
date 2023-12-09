@@ -7,4 +7,8 @@ public interface VehicleControlUseCase {
     Establishment vehicleEntryControl(String establishmentDocument, String vehiclePlate);
 
     Establishment vehicleExitControl(String establishmentDocument, String vehiclePlate);
+
+    String entriesSummary(String establishmentDocument);
+
+    String exitsSummary(String establishmentDocument);
 }
