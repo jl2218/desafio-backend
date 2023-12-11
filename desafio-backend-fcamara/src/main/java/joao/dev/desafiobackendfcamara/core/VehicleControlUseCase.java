@@ -2,13 +2,15 @@ package joao.dev.desafiobackendfcamara.core;
 
 import joao.dev.desafiobackendfcamara.domain.establishment.Establishment;
 
+import java.time.LocalDateTime;
+
 public interface VehicleControlUseCase {
 
     Establishment vehicleEntryControl(String establishmentDocument, String vehiclePlate);
 
     Establishment vehicleExitControl(String establishmentDocument, String vehiclePlate);
 
-    String entriesSummary(String establishmentDocument);
+    String summary(String establishmentDocument);
 
-    String exitsSummary(String establishmentDocument);
+    public String summaryPerHour(String establishmentDocument);
 }

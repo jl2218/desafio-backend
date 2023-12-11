@@ -1,5 +1,6 @@
 package joao.dev.desafiobackendfcamara.domain.establishment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,11 @@ public class Establishment {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int entries;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private LocalDateTime entryTime;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int exits;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private LocalDateTime exitTime;
 
     public Establishment(EstablishmentDTO data) {
         this.name = data.name();
@@ -57,10 +63,32 @@ public class Establishment {
     public void addEntry() {
         int entries = this.entries + 1;
         this.setEntries(entries);
+        this.entryTime = LocalDateTime.now();
     }
 
     public void addExit() {
         int exits = this.exits + 1;
         this.setExits(exits);
+        this.exitTime = LocalDateTime.now();
+    }
+
+    @JsonIgnore
+    public int getEntriesInLastHour() {
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        if (this.entryTime != null && this.entryTime.isAfter(oneHourAgo)) {
+            return this.entries;
+        } else {
+            return 0;
+        }
+    }
+
+    @JsonIgnore
+    public int getExitsInLastHour() {
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        if (this.exitTime != null && this.exitTime.isAfter(oneHourAgo)) {
+            return this.exits;
+        } else {
+            return 0;
+        }
     }
 }

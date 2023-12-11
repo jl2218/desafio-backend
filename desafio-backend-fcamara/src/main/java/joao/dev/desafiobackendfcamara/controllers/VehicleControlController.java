@@ -31,19 +31,19 @@ public class VehicleControlController {
         }
     }
 
-    @GetMapping("/entries/summary")
-    public ResponseEntity<?> entriesSummary(@RequestParam String establishmentDocument) {
+    @GetMapping("/summary")
+    public ResponseEntity<?> summary(@RequestParam String establishmentDocument) {
         try {
-            return new ResponseEntity<>(vehicleControlService.entriesSummary(establishmentDocument), HttpStatus.OK);
+            return new ResponseEntity<>(vehicleControlService.summary(establishmentDocument), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
         }
     }
 
-    @GetMapping("/exits/summary")
-    public ResponseEntity<?> exitsSummary(@RequestParam String establishmentDocument) {
+    @GetMapping("/summary/perHour")
+    public ResponseEntity<?> summaryPerHour(@RequestParam String establishmentDocument) {
         try {
-            return new ResponseEntity<>(vehicleControlService.exitsSummary(establishmentDocument), HttpStatus.OK);
+            return new ResponseEntity<>(vehicleControlService.summaryPerHour(establishmentDocument), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
         }

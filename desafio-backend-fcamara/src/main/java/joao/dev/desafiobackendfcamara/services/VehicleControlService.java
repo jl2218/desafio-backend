@@ -9,6 +9,8 @@ import joao.dev.desafiobackendfcamara.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class VehicleControlService implements VehicleControlUseCase {
 
@@ -53,16 +55,17 @@ public class VehicleControlService implements VehicleControlUseCase {
     }
 
     @Override
-    public String entriesSummary(String establishmentDocument) {
+    public String summary(String establishmentDocument) {
         Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
                 .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
-        return "No período total foram contabilizadas " + establishment.getEntries() + " entradas";
+        return "No período total foram contabilizadas " + establishment.getEntries() + " entradas e " + establishment.getExits() + " saídas";
     }
 
     @Override
-    public String exitsSummary(String establishmentDocument) {
+    public String summaryPerHour(String establishmentDocument) {
         Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
                 .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
-        return "No período total foram contabilizadas " + establishment.getExits() + " saídas";
+        return "No período de 1 hora foram contabilizadas " + establishment.getEntriesInLastHour() +
+                " entradas e " + establishment.getExitsInLastHour() + " saídas";
     }
 }
