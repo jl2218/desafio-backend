@@ -1,4 +1,4 @@
-# Desafio Back-end
+# Desafio para vaga Back-end
 
 ## Descrição do Projeto
 Este projeto é uma API REST para gerenciar um estacionamento de carros e motos.
@@ -11,11 +11,6 @@ Este projeto é uma API REST para gerenciar um estacionamento de carros e motos.
 - CRUD de Estabelecimentos
 - CRUD de Veículos
 - Controle de entrada e saída de veículos
-
-## Instalação e Execução
-1. Clone o repositório
-2. Instale as dependências com `mvn install`
-3. Inicie o servidor com `mvn spring-boot:run`
 
 ## Rotas da API
 - `POST /establishment/register` - Cria um novo estabelecimento
