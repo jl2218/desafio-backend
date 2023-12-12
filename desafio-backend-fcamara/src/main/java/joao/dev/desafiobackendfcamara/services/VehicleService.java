@@ -22,7 +22,8 @@ public class VehicleService implements VehicleUseCase {
             throw new DataIntegrityViolationException("A vehicle with this plate already exists");
         }
         Vehicle newVehicle = new Vehicle(data);
-        return vehicleRepository.save(newVehicle);
+        this.saveVehicle(newVehicle);
+        return newVehicle;
     }
 
     @Override
@@ -40,7 +41,8 @@ public class VehicleService implements VehicleUseCase {
         vehicle.setPlate(data.plate());
         vehicle.setType(data.type());
 
-        return vehicleRepository.save(vehicle);
+        this.saveVehicle(vehicle);
+        return vehicle;
     }
 
     @Override
@@ -50,5 +52,10 @@ public class VehicleService implements VehicleUseCase {
 
         vehicleRepository.delete(vehicleToBeDeleted);
         return "Vehicle deleted successfully";
+    }
+
+    @Override
+    public void saveVehicle(Vehicle vehicle) {
+        vehicleRepository.save(vehicle);
     }
 }

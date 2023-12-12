@@ -14,4 +14,6 @@ public interface VehicleUseCase {
     Vehicle updateVehicle(VehicleDTO data);
 
     String deleteVehicle(Long id) throws Exception;
+
+    void saveVehicle(Vehicle vehicle);
 }

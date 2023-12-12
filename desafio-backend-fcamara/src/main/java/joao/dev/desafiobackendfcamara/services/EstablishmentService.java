@@ -22,7 +22,8 @@ public class EstablishmentService implements EstablishmentUseCase {
             throw new DataIntegrityViolationException("An establishment with this document already exists");
         }
         Establishment newEstablishment = new Establishment(establishmentDTO);
-        return establishmentRepository.save(newEstablishment);
+        this.saveEstablishment(newEstablishment);
+        return newEstablishment;
     }
 
     @Override
@@ -42,7 +43,8 @@ public class EstablishmentService implements EstablishmentUseCase {
         establishment.setMotorcycleParkingLots(establishmentDTO.motorcycleParkingLots());
         establishment.setCarParkingLots(establishmentDTO.carParkingLots());
 
-        return establishmentRepository.save(establishment);
+        this.saveEstablishment(establishment);
+        return establishment;
     }
 
 
@@ -53,5 +55,10 @@ public class EstablishmentService implements EstablishmentUseCase {
 
         establishmentRepository.delete(establishmentToBeDeleted);
         return "Establishment deleted successfully";
+    }
+
+    @Override
+    public void saveEstablishment(Establishment establishment) {
+        establishmentRepository.save(establishment);
     }
 }
