@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
 
     Optional<Establishment> findByDocument(String document);
+
+    boolean existsByDocument(String document);
 }

@@ -15,37 +15,21 @@ public class VehicleControlController {
 
     @PostMapping("/entry")
     public ResponseEntity<?> vehicleEntryControl(@RequestParam String establishmentDocument, @RequestParam String vehiclePlate) {
-        try {
-            return new ResponseEntity<>(vehicleControlService.vehicleEntryControl(establishmentDocument, vehiclePlate), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+        return new ResponseEntity<>(vehicleControlService.vehicleEntryControl(establishmentDocument, vehiclePlate), HttpStatus.OK);
     }
 
     @PostMapping("/exit")
     public ResponseEntity<?> vehicleExitControl(@RequestParam String establishmentDocument, @RequestParam String vehiclePlate) {
-        try {
-            return new ResponseEntity<>(vehicleControlService.vehicleExitControl(establishmentDocument, vehiclePlate), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+        return new ResponseEntity<>(vehicleControlService.vehicleExitControl(establishmentDocument, vehiclePlate), HttpStatus.OK);
     }
 
     @GetMapping("/summary")
     public ResponseEntity<?> summary(@RequestParam String establishmentDocument) {
-        try {
-            return new ResponseEntity<>(vehicleControlService.summary(establishmentDocument), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+        return new ResponseEntity<>(vehicleControlService.summary(establishmentDocument), HttpStatus.OK);
     }
 
     @GetMapping("/summary/perHour")
     public ResponseEntity<?> summaryPerHour(@RequestParam String establishmentDocument) {
-        try {
-            return new ResponseEntity<>(vehicleControlService.summaryPerHour(establishmentDocument), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+        return new ResponseEntity<>(vehicleControlService.summaryPerHour(establishmentDocument), HttpStatus.OK);
     }
 }

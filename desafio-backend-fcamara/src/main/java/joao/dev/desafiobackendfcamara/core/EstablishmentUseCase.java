@@ -13,5 +13,5 @@ public interface EstablishmentUseCase {
 
     Establishment updateEstablishment(EstablishmentDTO establishmentDTO);
 
-    String deleteEstablishment(Long id);
+    String deleteEstablishment(Long id) throws Exception;
 }

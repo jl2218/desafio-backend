@@ -2,6 +2,7 @@ package joao.dev.desafiobackendfcamara.controllers;
 
 import jakarta.validation.Valid;
 import joao.dev.desafiobackendfcamara.domain.dtos.VehicleDTO;
+import joao.dev.desafiobackendfcamara.domain.vehicle.Vehicle;
 import joao.dev.desafiobackendfcamara.services.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,8 @@ public class VehicleController {
 
     @PostMapping("/register")
     public ResponseEntity<?> createVehicle(@RequestBody @Valid VehicleDTO data) {
-        try {
-            return new ResponseEntity<>(vehicleService.createVehicle(data), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+        Vehicle newVehicle = vehicleService.createVehicle(data);
+        return new ResponseEntity<>(newVehicle, HttpStatus.CREATED);
     }
 
     @GetMapping("/list")
@@ -31,19 +29,12 @@ public class VehicleController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateVehicle(@RequestBody @Valid VehicleDTO data) {
-        try {
-            return new ResponseEntity<>(vehicleService.updateVehicle(data), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+        Vehicle updatedVehicle = vehicleService.updateVehicle(data);
+        return new ResponseEntity<>(updatedVehicle, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteVehicle(@RequestParam Long id) {
-        try {
-            return new ResponseEntity<>(vehicleService.deleteVehicle(id), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+    public ResponseEntity<?> deleteVehicle(@RequestParam Long id) throws Exception {
+        return new ResponseEntity<>(vehicleService.deleteVehicle(id), HttpStatus.OK);
     }
 }

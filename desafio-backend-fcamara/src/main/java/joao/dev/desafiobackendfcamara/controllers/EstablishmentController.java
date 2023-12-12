@@ -2,6 +2,7 @@ package joao.dev.desafiobackendfcamara.controllers;
 
 import jakarta.validation.Valid;
 import joao.dev.desafiobackendfcamara.domain.dtos.EstablishmentDTO;
+import joao.dev.desafiobackendfcamara.domain.establishment.Establishment;
 import joao.dev.desafiobackendfcamara.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,8 @@ public class EstablishmentController {
 
     @PostMapping("/register")
     public ResponseEntity<?> createEstablishment(@RequestBody @Valid EstablishmentDTO data) {
-        try {
-            return new ResponseEntity<>(establishmentService.createEstablishment(data), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+        Establishment newEstablishment = establishmentService.createEstablishment(data);
+        return new ResponseEntity<>(newEstablishment, HttpStatus.CREATED);
     }
 
     @GetMapping("/list")
@@ -31,19 +29,12 @@ public class EstablishmentController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateEstablishment(@RequestBody @Valid EstablishmentDTO data) {
-        try {
-            return new ResponseEntity<>(establishmentService.updateEstablishment(data), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+        Establishment updatedEstablishment = establishmentService.updateEstablishment(data);
+        return new ResponseEntity<>(updatedEstablishment, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteEstablishment(@RequestParam Long id) {
-        try {
-            return new ResponseEntity<>(establishmentService.deleteEstablishment(id), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getLocalizedMessage());
-        }
+    public ResponseEntity<?> deleteEstablishment(@RequestParam Long id) throws Exception {
+        return new ResponseEntity<>(establishmentService.deleteEstablishment(id), HttpStatus.OK);
     }
 }

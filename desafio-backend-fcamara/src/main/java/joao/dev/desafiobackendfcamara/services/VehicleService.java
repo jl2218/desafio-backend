@@ -2,10 +2,10 @@ package joao.dev.desafiobackendfcamara.services;
 
 import joao.dev.desafiobackendfcamara.core.VehicleUseCase;
 import joao.dev.desafiobackendfcamara.domain.dtos.VehicleDTO;
-import joao.dev.desafiobackendfcamara.domain.establishment.Establishment;
 import joao.dev.desafiobackendfcamara.domain.vehicle.Vehicle;
 import joao.dev.desafiobackendfcamara.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +18,9 @@ public class VehicleService implements VehicleUseCase {
 
     @Override
     public Vehicle createVehicle(VehicleDTO data) {
+        if (vehicleRepository.existsByPlate(data.plate())) {
+            throw new DataIntegrityViolationException("A vehicle with this plate already exists");
+        }
         Vehicle newVehicle = new Vehicle(data);
         return vehicleRepository.save(newVehicle);
     }
@@ -41,14 +44,11 @@ public class VehicleService implements VehicleUseCase {
     }
 
     @Override
-    public String deleteVehicle(Long id) {
+    public String deleteVehicle(Long id) throws Exception {
         Vehicle vehicleToBeDeleted = vehicleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found"));
-        try {
-            vehicleRepository.delete(vehicleToBeDeleted);
-            return "Vehicle deleted successfully";
-        } catch (Exception e) {
-            return "Error deleting the vehicle";
-        }
+                .orElseThrow(() -> new Exception("Vehicle not found"));
+
+        vehicleRepository.delete(vehicleToBeDeleted);
+        return "Vehicle deleted successfully";
     }
 }
