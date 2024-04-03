@@ -1,5 +1,6 @@
 package joao.dev.desafiobackendfcamara.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String username;
     @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @NotBlank
     private UserRole role;
