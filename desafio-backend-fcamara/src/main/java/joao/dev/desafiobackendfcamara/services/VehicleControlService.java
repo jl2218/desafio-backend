@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Service
 public class VehicleControlService implements VehicleControlUseCase {
 
@@ -30,11 +27,8 @@ public class VehicleControlService implements VehicleControlUseCase {
         Pair<Establishment, Vehicle> pair = getEstablishmentAndVehicle(establishmentDocument, vehiclePlate);
         Establishment establishment = pair.getFirst();
         Vehicle vehicle = pair.getSecond();
-        establishment.getParkedVehicles().add(vehicle);
-        updateParkingLots(establishment, vehicle, -1);
-        establishment.addEntry();
-        establishmentService.saveEstablishment(establishment);
-        return establishment;
+
+        return this.processVehicleControl(establishment, vehicle, true);
     }
 
     @Override
@@ -42,26 +36,23 @@ public class VehicleControlService implements VehicleControlUseCase {
         Pair<Establishment, Vehicle> pair = getEstablishmentAndVehicle(establishmentDocument, vehiclePlate);
         Establishment establishment = pair.getFirst();
         Vehicle vehicle = pair.getSecond();
-        establishment.getParkedVehicles().remove(vehicle);
-        updateParkingLots(establishment, vehicle, 1);
-        establishment.addExit();
-        establishmentService.saveEstablishment(establishment);
-        return establishment;
+
+        return this.processVehicleControl(establishment, vehicle, false);
     }
 
     @Override
     public String summary(String establishmentDocument) {
         Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
                 .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
-        return "No período total foram contabilizadas " + establishment.getEntries() + " entradas e " + establishment.getExits() + " saídas";
+        return "In the total period there were " + establishment.getEntries() + " entries and " + establishment.getExits() + " exits";
     }
 
     @Override
     public String summaryPerHour(String establishmentDocument) {
         Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
                 .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
-        return "No período de 1 hora foram contabilizadas " + establishment.getEntriesInLastHour() +
-                " entradas e " + establishment.getExitsInLastHour() + " saídas";
+        return "In the period of 1 hour there were " + establishment.getEntriesInLastHour() +
+                " entries and " + establishment.getExitsInLastHour() + " exits";
     }
 
     private Pair<Establishment, Vehicle> getEstablishmentAndVehicle(String establishmentDocument, String vehiclePlate) {
@@ -77,6 +68,42 @@ public class VehicleControlService implements VehicleControlUseCase {
             establishment.setCarParkingLots(establishment.getCarParkingLots() + increment);
         } else {
             establishment.setMotorcycleParkingLots(establishment.getMotorcycleParkingLots() + increment);
+        }
+    }
+
+    public Establishment processVehicleControl(Establishment establishment, Vehicle vehicle, boolean isEntry) {
+        boolean isVehicleParked = establishment.getParkedVehicles().contains(vehicle);
+        if (isEntry && isVehicleParked) {
+            throw new IllegalArgumentException("This vehicle is already parked!");
+        } else if (!isEntry && !isVehicleParked) {
+            throw new IllegalArgumentException("There is no vehicle with this plate parked!");
+        }
+
+        if (isEntry) {
+            this.validateParkingLotsAvailable(establishment, vehicle);
+            establishment.getParkedVehicles().add(vehicle);
+            updateParkingLots(establishment, vehicle, -1);
+            establishment.addEntry();
+        } else {
+            establishment.getParkedVehicles().remove(vehicle);
+            updateParkingLots(establishment, vehicle, 1);
+            establishment.addExit();
+        }
+
+        establishmentService.saveEstablishment(establishment);
+
+        return establishment;
+    }
+
+    private void validateParkingLotsAvailable(Establishment establishment, Vehicle vehicle) {
+        if (vehicle.getType().equals(VehicleType.CAR)) {
+            if (establishment.getCarParkingLots() == 0) {
+                throw new IllegalArgumentException("There is no more parking lots available!");
+            }
+        } else {
+            if (establishment.getMotorcycleParkingLots() == 0) {
+                throw new IllegalArgumentException("There is no more parking lots available!");
+            }
         }
     }
 }

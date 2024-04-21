@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import joao.dev.desafiobackendfcamara.domain.address.Address;
 import joao.dev.desafiobackendfcamara.domain.dtos.EstablishmentDTO;
 import joao.dev.desafiobackendfcamara.domain.vehicle.Vehicle;
+import joao.dev.desafiobackendfcamara.domain.vehicleMovements.MovementType;
+import joao.dev.desafiobackendfcamara.domain.vehicleMovements.VehicleMovements;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,13 +44,7 @@ public class Establishment {
     @OneToMany
     private List<Vehicle> parkedVehicles = new ArrayList<>();
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private int entries;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private LocalDateTime entryTime;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private int exits;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private LocalDateTime exitTime;
+    private List<VehicleMovements> entriesAndExits = new ArrayList<>();
 
     public Establishment(EstablishmentDTO data) {
         this.name = data.name();
@@ -60,34 +56,47 @@ public class Establishment {
     }
 
     public void addEntry() {
-        int entries = this.entries + 1;
-        this.setEntries(entries);
-        this.entryTime = LocalDateTime.now();
+        VehicleMovements movement = new VehicleMovements(MovementType.ENTRY, LocalDateTime.now());
+        this.getEntriesAndExits().add(movement);
     }
 
     public void addExit() {
-        int exits = this.exits + 1;
-        this.setExits(exits);
-        this.exitTime = LocalDateTime.now();
+        VehicleMovements movement = new VehicleMovements(MovementType.EXIT, LocalDateTime.now());
+        this.getEntriesAndExits().add(movement);
     }
 
     @JsonIgnore
-    public int getEntriesInLastHour() {
-        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
-        if (this.entryTime != null && this.entryTime.isAfter(oneHourAgo)) {
-            return this.entries;
-        } else {
-            return 0;
-        }
+    public long getEntriesInLastHour() {
+        return this.filterByMovementTypeInLastHour(MovementType.ENTRY);
     }
 
     @JsonIgnore
-    public int getExitsInLastHour() {
+    public long getExitsInLastHour() {
+        return this.filterByMovementTypeInLastHour(MovementType.EXIT);
+    }
+
+    @JsonIgnore
+    public long getEntries() {
+        return this.filterByMovementType(MovementType.ENTRY);
+    }
+
+    @JsonIgnore
+    public long getExits() {
+        return this.filterByMovementType(MovementType.EXIT);
+    }
+
+    private long filterByMovementTypeInLastHour(MovementType type) {
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
-        if (this.exitTime != null && this.exitTime.isAfter(oneHourAgo)) {
-            return this.exits;
-        } else {
-            return 0;
-        }
+        return this.entriesAndExits.stream()
+                .filter(vehicleMovements ->
+                        vehicleMovements.getType() == type
+                                && vehicleMovements.getMovementTime().isAfter(oneHourAgo))
+                .count();
+    }
+
+    private long filterByMovementType(MovementType type) {
+        return this.entriesAndExits.stream()
+                .filter(vehicleMovements -> vehicleMovements.getType() == type)
+                .count();
     }
 }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import joao.dev.desafiobackendfcamara.domain.dtos.VehicleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity(name = "vehicles")
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Vehicle {
 
     @Id
@@ -22,6 +24,7 @@ public class Vehicle {
     private String color;
     @Column(unique = true)
     @NotBlank
+    @EqualsAndHashCode.Include
     private String plate;
     @NotBlank
     @Enumerated(EnumType.STRING)
