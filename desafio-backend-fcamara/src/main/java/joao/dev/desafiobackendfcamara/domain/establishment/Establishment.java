@@ -23,8 +23,7 @@ import java.util.List;
 public class Establishment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
     @NotBlank
     private String name;
     @Column(unique = true)

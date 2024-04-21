@@ -1,11 +1,13 @@
 package joao.dev.desafiobackendfcamara.repositories;
 
 import joao.dev.desafiobackendfcamara.domain.establishment.Establishment;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
+@Repository
+public interface EstablishmentRepository extends MongoRepository<Establishment, Long> {
 
     Optional<Establishment> findByDocument(String document);
 
