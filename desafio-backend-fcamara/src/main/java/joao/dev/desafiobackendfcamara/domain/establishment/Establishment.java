@@ -56,13 +56,11 @@ public class Establishment {
     }
 
     public void addEntry() {
-        VehicleMovements movement = new VehicleMovements(MovementType.ENTRY, LocalDateTime.now());
-        this.getEntriesAndExits().add(movement);
+        this.getEntriesAndExits().add(new VehicleMovements(MovementType.ENTRY, LocalDateTime.now()));
     }
 
     public void addExit() {
-        VehicleMovements movement = new VehicleMovements(MovementType.EXIT, LocalDateTime.now());
-        this.getEntriesAndExits().add(movement);
+        this.getEntriesAndExits().add(new VehicleMovements(MovementType.EXIT, LocalDateTime.now()));
     }
 
     @JsonIgnore
