@@ -17,8 +17,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "establishments")
-@Table(name = "establishments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,7 +30,6 @@ public class Establishment {
     @NotBlank
     private String document;
     @NotBlank
-    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
     @Column(unique = true)
     @NotBlank
@@ -41,7 +38,6 @@ public class Establishment {
     private int motorcycleParkingLots;
     @NotBlank
     private int carParkingLots;
-    @OneToMany
     private List<Vehicle> parkedVehicles = new ArrayList<>();
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<VehicleMovements> entriesAndExits = new ArrayList<>();

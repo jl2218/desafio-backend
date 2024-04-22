@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "vehicles")
-@Table(name = "vehicles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
