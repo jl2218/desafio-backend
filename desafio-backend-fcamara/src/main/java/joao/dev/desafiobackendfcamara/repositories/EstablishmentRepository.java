@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface EstablishmentRepository extends MongoRepository<Establishment, Long> {
+public interface EstablishmentRepository extends MongoRepository<Establishment, String> {
 
     Optional<Establishment> findByDocument(String document);
 

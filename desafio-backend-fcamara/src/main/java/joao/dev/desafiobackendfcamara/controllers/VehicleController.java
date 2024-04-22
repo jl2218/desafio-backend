@@ -34,7 +34,7 @@ public class VehicleController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteVehicle(@RequestParam Long id) throws Exception {
+    public ResponseEntity<?> deleteVehicle(@RequestParam String id) throws Exception {
         return new ResponseEntity<>(vehicleService.deleteVehicle(id), HttpStatus.OK);
     }
 }

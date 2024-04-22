@@ -49,7 +49,7 @@ public class EstablishmentService implements EstablishmentUseCase {
 
 
     @Override
-    public String deleteEstablishment(Long id) throws Exception {
+    public String deleteEstablishment(String id) throws Exception {
         Establishment establishmentToBeDeleted = establishmentRepository.findById(id)
                 .orElseThrow(() -> new Exception("Establishment not found"));
 

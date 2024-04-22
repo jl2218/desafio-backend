@@ -34,7 +34,7 @@ public class EstablishmentController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteEstablishment(@RequestParam Long id) throws Exception {
+    public ResponseEntity<?> deleteEstablishment(@RequestParam String id) throws Exception {
         return new ResponseEntity<>(establishmentService.deleteEstablishment(id), HttpStatus.OK);
     }
 }

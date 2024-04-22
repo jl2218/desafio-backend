@@ -12,5 +12,5 @@ public interface VehicleControlUseCase {
 
     String summary(String establishmentDocument);
 
-    public String summaryPerHour(String establishmentDocument);
+    String summaryPerHour(String establishmentDocument);
 }

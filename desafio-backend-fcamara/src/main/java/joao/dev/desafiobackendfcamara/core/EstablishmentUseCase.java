@@ -13,7 +13,7 @@ public interface EstablishmentUseCase {
 
     Establishment updateEstablishment(EstablishmentDTO establishmentDTO);
 
-    String deleteEstablishment(Long id) throws Exception;
+    String deleteEstablishment(String id) throws Exception;
 
     void saveEstablishment(Establishment establishment);
 }

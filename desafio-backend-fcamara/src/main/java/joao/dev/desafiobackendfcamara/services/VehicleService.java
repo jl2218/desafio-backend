@@ -46,7 +46,7 @@ public class VehicleService implements VehicleUseCase {
     }
 
     @Override
-    public String deleteVehicle(Long id) throws Exception {
+    public String deleteVehicle(String id) throws Exception {
         Vehicle vehicleToBeDeleted = vehicleRepository.findById(id)
                 .orElseThrow(() -> new Exception("Vehicle not found"));
 

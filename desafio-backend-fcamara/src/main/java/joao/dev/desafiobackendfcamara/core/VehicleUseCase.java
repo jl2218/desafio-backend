@@ -13,7 +13,7 @@ public interface VehicleUseCase {
 
     Vehicle updateVehicle(VehicleDTO data);
 
-    String deleteVehicle(Long id) throws Exception;
+    String deleteVehicle(String id) throws Exception;
 
     void saveVehicle(Vehicle vehicle);
 }
