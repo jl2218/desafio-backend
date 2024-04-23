@@ -58,4 +58,16 @@ public class VehicleService implements VehicleUseCase {
     public void saveVehicle(Vehicle vehicle) {
         vehicleRepository.save(vehicle);
     }
+
+    public Vehicle saveOrFindByPlate(Vehicle vehicle) {
+        Vehicle existingVehicle = vehicleRepository.findByPlate(vehicle.getPlate())
+                .orElse(null);
+
+        if (existingVehicle == null) {
+            saveVehicle(vehicle);
+            return vehicle;
+        }
+
+        return existingVehicle;
+    }
 }

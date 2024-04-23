@@ -13,4 +13,8 @@ public interface VehicleControlUseCase {
     String summary(String establishmentDocument);
 
     String summaryPerHour(String establishmentDocument);
+
+    Establishment vehicleEntryControlForCustomer(String establishmentDocument, String customerDocument);
+
+    Establishment vehicleExitControlForCustomer(String establishmentDocument, String customerDocument);
 }

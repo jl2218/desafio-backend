@@ -1,9 +1,11 @@
 package joao.dev.desafiobackendfcamara.services;
 
 import joao.dev.desafiobackendfcamara.core.VehicleControlUseCase;
+import joao.dev.desafiobackendfcamara.domain.customer.Customer;
 import joao.dev.desafiobackendfcamara.domain.establishment.Establishment;
 import joao.dev.desafiobackendfcamara.domain.vehicle.Vehicle;
 import joao.dev.desafiobackendfcamara.domain.vehicle.VehicleType;
+import joao.dev.desafiobackendfcamara.repositories.CustomerRepository;
 import joao.dev.desafiobackendfcamara.repositories.EstablishmentRepository;
 import joao.dev.desafiobackendfcamara.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,12 @@ public class VehicleControlService implements VehicleControlUseCase {
 
     @Autowired
     private VehicleRepository vehicleRepository;
-
     @Autowired
     private EstablishmentRepository establishmentRepository;
-
     @Autowired
     private EstablishmentService establishmentService;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Override
     public Establishment vehicleEntryControl(String establishmentDocument, String vehiclePlate) {
@@ -55,12 +57,40 @@ public class VehicleControlService implements VehicleControlUseCase {
                 " entries and " + establishment.getExitsInLastHour() + " exits";
     }
 
+    @Override
+    public Establishment vehicleEntryControlForCustomer(String establishmentDocument, String customerDocument) {
+        Pair<Establishment, Customer> pair = getEstablishmentAndCustomer(establishmentDocument, customerDocument);
+        Establishment establishment = pair.getFirst();
+        Customer customer = pair.getSecond();
+        customer.validateCustomerExpiration();
+
+        return this.processVehicleControl(establishment, customer.getVehicle(), true);
+    }
+
+    @Override
+    public Establishment vehicleExitControlForCustomer(String establishmentDocument, String customerDocument) {
+        Pair<Establishment, Customer> pair = getEstablishmentAndCustomer(establishmentDocument, customerDocument);
+        Establishment establishment = pair.getFirst();
+        Customer customer = pair.getSecond();
+        customer.validateCustomerExpiration();
+
+        return this.processVehicleControl(establishment, customer.getVehicle(), false);
+    }
+
     private Pair<Establishment, Vehicle> getEstablishmentAndVehicle(String establishmentDocument, String vehiclePlate) {
         Vehicle vehicle = vehicleRepository.findByPlate(vehiclePlate)
                 .orElseThrow(() -> new IllegalArgumentException("Vehicle not found"));
         Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
                 .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
         return Pair.of(establishment, vehicle);
+    }
+
+    private Pair<Establishment, Customer> getEstablishmentAndCustomer(String establishmentDocument, String customerDocument) {
+        Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
+                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
+        Customer customer = customerRepository.findByDocument(customerDocument)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+        return Pair.of(establishment, customer);
     }
 
     private void updateParkingLots(Establishment establishment, Vehicle vehicle, int increment) {

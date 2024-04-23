@@ -32,4 +32,18 @@ public class VehicleControlController {
     public ResponseEntity<?> summaryPerHour(@RequestParam String establishmentDocument) {
         return new ResponseEntity<>(vehicleControlService.summaryPerHour(establishmentDocument), HttpStatus.OK);
     }
+
+    @PostMapping("/entry/customer")
+    public ResponseEntity<?> vehicleEntryControlForCustomer(@RequestParam String establishmentDocument,
+                                                            @RequestParam String customerDocument) {
+        return new ResponseEntity<>(vehicleControlService.vehicleEntryControlForCustomer(
+                establishmentDocument, customerDocument), HttpStatus.OK);
+    }
+
+    @PostMapping("/exit/customer")
+    public ResponseEntity<?> vehicleExitControlForCustomer(@RequestParam String establishmentDocument,
+                                                           @RequestParam String customerDocument) {
+        return new ResponseEntity<>(vehicleControlService.vehicleExitControlForCustomer(
+                establishmentDocument, customerDocument), HttpStatus.OK);
+    }
 }
