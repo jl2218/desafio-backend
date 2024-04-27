@@ -1,5 +1,10 @@
 package joao.dev.desafiobackendfcamara.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import joao.dev.desafiobackendfcamara.domain.dtos.AuthenticationDTO;
 import joao.dev.desafiobackendfcamara.domain.dtos.LoginResponseDTO;
@@ -31,6 +36,16 @@ public class AuthenticationController {
     @Autowired
     private TokenService tokenService;
 
+    @Operation(description = "Login")
+    @ApiResponses(value =  {
+            @ApiResponse(responseCode = "200", description = "Retorna o token de acesso da aplicação",
+                    content = @Content(
+                            examples = @ExampleObject(
+                                    value = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InN0cmluZyIsImV4cCI6MTcxNDE4Mjc0Nn0.6Zbq5QzYw0v7rZ2sY3QeR4KlZlBz9X8y5bJ5wYrYFqU"
+                            )
+                    )),
+            @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthenticationDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
@@ -41,6 +56,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
+    @Operation(description = "Cria um usuário")
+    @ApiResponses(value =  {
+            @ApiResponse(responseCode = "200", description = "Retorna o usuário criado"),
+            @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
+    })
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
         if (this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();

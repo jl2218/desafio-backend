@@ -22,6 +22,20 @@ public class SecurityConfigurations {
     @Autowired
     private SecurityFilter securityFilter;
 
+    private static final String[] PUBLIC_URLS = {
+            "/api/v1/auth/**",
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/webjars/**",
+            "/swagger-ui.html"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -33,6 +47,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/establishment/register").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/establishment/update").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/establishment/delete").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, PUBLIC_URLS).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
