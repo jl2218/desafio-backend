@@ -35,3 +35,9 @@ Este projeto é uma API REST para gerenciar um estacionamento de carros e motos.
 
 ## Autenticação
 Este projeto utiliza JWT para autenticação. Para criar um usuário, use a rota `POST /auth/register`e para autenticar, use a rota `POST /auth/login`.
+
+## Documentação
+Este projeto contém documentação. Para acessar, utilize a rota `/swagger-ui/index.html`
+
+## Docker
+Este projeto está conteinerizado. Para acessar, utilize o link <https://hub.docker.com/repository/docker/joaopedrofaria/myrepo/general>
