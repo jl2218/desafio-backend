@@ -36,12 +36,7 @@ public class EstablishmentService implements EstablishmentUseCase {
         Establishment establishment = establishmentRepository.findById(establishmentDTO.id())
                 .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
 
-        establishment.setName(establishmentDTO.name());
-        establishment.setDocument(establishmentDTO.document());
-        establishment.setAddress(establishmentDTO.address());
-        establishment.setPhoneNumber(establishmentDTO.phoneNumber());
-        establishment.setMotorcycleParkingLots(establishmentDTO.motorcycleParkingLots());
-        establishment.setCarParkingLots(establishmentDTO.carParkingLots());
+        establishment.updateEstablishment(establishmentDTO);
 
         this.saveEstablishment(establishment);
         return establishment;
@@ -60,5 +55,10 @@ public class EstablishmentService implements EstablishmentUseCase {
     @Override
     public void saveEstablishment(Establishment establishment) {
         establishmentRepository.save(establishment);
+    }
+
+    public Establishment findByDocument(String document) {
+        return establishmentRepository.findByDocument(document)
+                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
     }
 }

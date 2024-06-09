@@ -8,5 +8,6 @@ public record EstablishmentDTO(String id,
                                Address address,
                                String phoneNumber,
                                int motorcycleParkingLots,
-                               int carParkingLots) {
+                               int carParkingLots,
+                               double valuePerHour) {
 }

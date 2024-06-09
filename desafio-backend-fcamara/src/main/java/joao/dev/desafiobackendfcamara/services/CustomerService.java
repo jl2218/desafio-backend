@@ -78,4 +78,9 @@ public class CustomerService implements CustomerUseCase{
         this.saveCustomer(customer);
         return customer;
     }
+
+    public Customer findByDocument(String document) {
+        return customerRepository.findByDocument(document)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+    }
 }

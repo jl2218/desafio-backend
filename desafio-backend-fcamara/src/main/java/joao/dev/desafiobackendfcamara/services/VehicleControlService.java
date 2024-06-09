@@ -3,11 +3,10 @@ package joao.dev.desafiobackendfcamara.services;
 import joao.dev.desafiobackendfcamara.core.VehicleControlUseCase;
 import joao.dev.desafiobackendfcamara.domain.customer.Customer;
 import joao.dev.desafiobackendfcamara.domain.establishment.Establishment;
+import joao.dev.desafiobackendfcamara.domain.establishment.EstablishmentAndDebits;
 import joao.dev.desafiobackendfcamara.domain.vehicle.Vehicle;
-import joao.dev.desafiobackendfcamara.domain.vehicle.VehicleType;
-import joao.dev.desafiobackendfcamara.repositories.CustomerRepository;
-import joao.dev.desafiobackendfcamara.repositories.EstablishmentRepository;
-import joao.dev.desafiobackendfcamara.repositories.VehicleRepository;
+import joao.dev.desafiobackendfcamara.domain.vehicleMovements.MovementType;
+import joao.dev.desafiobackendfcamara.domain.vehicleMovements.VehicleMovements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -16,13 +15,13 @@ import org.springframework.stereotype.Service;
 public class VehicleControlService implements VehicleControlUseCase {
 
     @Autowired
-    private VehicleRepository vehicleRepository;
+    private VehicleService vehicleService;
     @Autowired
-    private EstablishmentRepository establishmentRepository;
+    private CustomerService customerService;
+    @Autowired
+    private VehicleMovementsService vehicleMovementsService;
     @Autowired
     private EstablishmentService establishmentService;
-    @Autowired
-    private CustomerRepository customerRepository;
 
     @Override
     public Establishment vehicleEntryControl(String establishmentDocument, String vehiclePlate) {
@@ -30,29 +29,32 @@ public class VehicleControlService implements VehicleControlUseCase {
         Establishment establishment = pair.getFirst();
         Vehicle vehicle = pair.getSecond();
 
-        return this.processVehicleControl(establishment, vehicle, true);
+        return this.processVehicleEntry(establishment, vehicle);
     }
 
     @Override
-    public Establishment vehicleExitControl(String establishmentDocument, String vehiclePlate) {
+    public EstablishmentAndDebits vehicleExitControl(String establishmentDocument, String vehiclePlate) {
         Pair<Establishment, Vehicle> pair = getEstablishmentAndVehicle(establishmentDocument, vehiclePlate);
         Establishment establishment = pair.getFirst();
         Vehicle vehicle = pair.getSecond();
 
-        return this.processVehicleControl(establishment, vehicle, false);
+        establishment = this.processVehicleExit(establishment, vehicle);
+        VehicleMovements entry = vehicleMovementsService.processEntryMovement(establishment, vehiclePlate);
+        long parkedHours = establishment.calculateHours(entry);
+        double debits = establishment.calculateDebits(entry);
+
+        return EstablishmentAndDebits.getEstablishmentAndDebits(establishment, debits, parkedHours);
     }
 
     @Override
     public String summary(String establishmentDocument) {
-        Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
-                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
+        Establishment establishment = establishmentService.findByDocument(establishmentDocument);
         return "In the total period there were " + establishment.getEntries() + " entries and " + establishment.getExits() + " exits";
     }
 
     @Override
     public String summaryPerHour(String establishmentDocument) {
-        Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
-                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
+        Establishment establishment = establishmentService.findByDocument(establishmentDocument);
         return "In the period of 1 hour there were " + establishment.getEntriesInLastHour() +
                 " entries and " + establishment.getExitsInLastHour() + " exits";
     }
@@ -64,7 +66,7 @@ public class VehicleControlService implements VehicleControlUseCase {
         Customer customer = pair.getSecond();
         customer.validateCustomerExpiration();
 
-        return this.processVehicleControl(establishment, customer.getVehicle(), true);
+        return this.processVehicleEntry(establishment, customer.getVehicle());
     }
 
     @Override
@@ -74,66 +76,49 @@ public class VehicleControlService implements VehicleControlUseCase {
         Customer customer = pair.getSecond();
         customer.validateCustomerExpiration();
 
-        return this.processVehicleControl(establishment, customer.getVehicle(), false);
+        return this.processVehicleExit(establishment, customer.getVehicle());
     }
 
     private Pair<Establishment, Vehicle> getEstablishmentAndVehicle(String establishmentDocument, String vehiclePlate) {
-        Vehicle vehicle = vehicleRepository.findByPlate(vehiclePlate)
-                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found"));
-        Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
-                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
+        Vehicle vehicle = vehicleService.findByPlate(vehiclePlate);
+        Establishment establishment = establishmentService.findByDocument(establishmentDocument);
         return Pair.of(establishment, vehicle);
     }
 
     private Pair<Establishment, Customer> getEstablishmentAndCustomer(String establishmentDocument, String customerDocument) {
-        Establishment establishment = establishmentRepository.findByDocument(establishmentDocument)
-                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
-        Customer customer = customerRepository.findByDocument(customerDocument)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+        Establishment establishment = establishmentService.findByDocument(establishmentDocument);
+        Customer customer = customerService.findByDocument(customerDocument);
         return Pair.of(establishment, customer);
     }
 
-    private void updateParkingLots(Establishment establishment, Vehicle vehicle, int increment) {
-        if (vehicle.getType().equals(VehicleType.CAR)) {
-            establishment.setCarParkingLots(establishment.getCarParkingLots() + increment);
-        } else {
-            establishment.setMotorcycleParkingLots(establishment.getMotorcycleParkingLots() + increment);
-        }
-    }
-
-    public Establishment processVehicleControl(Establishment establishment, Vehicle vehicle, boolean isEntry) {
+    public Establishment processVehicleEntry(Establishment establishment, Vehicle vehicle) {
         boolean isVehicleParked = establishment.getParkedVehicles().contains(vehicle);
-        if (isEntry && isVehicleParked) {
+        if (isVehicleParked) {
             throw new IllegalArgumentException("This vehicle is already parked!");
-        } else if (!isEntry && !isVehicleParked) {
-            throw new IllegalArgumentException("There is no vehicle with this plate parked!");
         }
 
-        if (isEntry) {
-            this.validateParkingLotsAvailable(establishment, vehicle);
-            establishment.getParkedVehicles().add(vehicle);
-            updateParkingLots(establishment, vehicle, -1);
-            establishment.addEntry();
-        } else {
-            establishment.getParkedVehicles().remove(vehicle);
-            updateParkingLots(establishment, vehicle, 1);
-            establishment.addExit();
-        }
+        establishment.validateParkingLotsAvailable(vehicle.getType());
+        establishment.getParkedVehicles().add(vehicle);
+        establishment.updateParkingLots(vehicle.getType(), -1);
+        establishment.addEntryOrExit(vehicleMovementsService.processVehicleMovement(MovementType.ENTRY, vehicle.getPlate()));
 
         establishmentService.saveEstablishment(establishment);
 
         return establishment;
     }
 
-    private void validateParkingLotsAvailable(Establishment establishment, Vehicle vehicle) {
-        if (vehicle.getType().equals(VehicleType.CAR)) {
-            if (establishment.getCarParkingLots() == 0) {
-                throw new IllegalArgumentException("There is no more parking lots available!");
-            }
-        } else {
-            if (establishment.getMotorcycleParkingLots() == 0) {
-                throw new IllegalArgumentException("There is no more parking lots available!");
-            }
+    public Establishment processVehicleExit(Establishment establishment, Vehicle vehicle) {
+        boolean isVehicleParked = establishment.getParkedVehicles().contains(vehicle);
+        if (!isVehicleParked) {
+            throw new IllegalArgumentException("There is no vehicle with this plate parked!");
         }
+
+        establishment.getParkedVehicles().remove(vehicle);
+        establishment.updateParkingLots(vehicle.getType(), 1);
+        establishment.addEntryOrExit(vehicleMovementsService.processVehicleMovement(MovementType.EXIT, vehicle.getPlate()));
+
+        establishmentService.saveEstablishment(establishment);
+
+        return establishment;
     }
 }

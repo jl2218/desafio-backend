@@ -70,4 +70,9 @@ public class VehicleService implements VehicleUseCase {
 
         return existingVehicle;
     }
+
+    public Vehicle findByPlate(String plate) {
+        return vehicleRepository.findByPlate(plate)
+                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found"));
+    }
 }
