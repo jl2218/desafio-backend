@@ -47,7 +47,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationDTO data) {
+    public ResponseEntity<?> login(@RequestBody @Valid AuthenticationDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
