@@ -46,7 +46,7 @@ public class EstablishmentController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PutMapping("/update")
-    public ResponseEntity<?> updateEstablishment(@RequestBody @Valid EstablishmentDTO data) {
+    public ResponseEntity<?> updateEstablishment(@RequestBody EstablishmentDTO data) {
         Establishment updatedEstablishment = establishmentService.updateEstablishment(data);
         return new ResponseEntity<>(updatedEstablishment, HttpStatus.OK);
     }

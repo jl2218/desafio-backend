@@ -63,7 +63,8 @@ public class AuthenticationController {
     })
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
-        if (this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();
+        if (this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest()
+                .body("Username already registered!");
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.username(), encryptedPassword, data.role());

@@ -1,7 +1,6 @@
 package joao.dev.desafiobackendfcamara.domain.customer;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import joao.dev.desafiobackendfcamara.domain.dtos.CustomerDTO;
 import joao.dev.desafiobackendfcamara.domain.vehicle.Vehicle;
 import lombok.AllArgsConstructor;
@@ -18,16 +17,10 @@ public class Customer {
 
     @Id
     private String id;
-    @NotBlank
-    @Column(unique = true)
     private String document;
-    @NotBlank
     private String name;
-    @NotBlank
     private Vehicle vehicle;
-    @NotBlank
     private String phoneNumber;
-    @NotBlank
     private Period period;
     private LocalDate contractCreationDate;
     private boolean expired;

@@ -46,7 +46,7 @@ public class VehicleController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PutMapping("/update")
-    public ResponseEntity<?> updateVehicle(@RequestBody @Valid VehicleDTO data) {
+    public ResponseEntity<?> updateVehicle(@RequestBody VehicleDTO data) {
         Vehicle updatedVehicle = vehicleService.updateVehicle(data);
         return new ResponseEntity<>(updatedVehicle, HttpStatus.CREATED);
     }
