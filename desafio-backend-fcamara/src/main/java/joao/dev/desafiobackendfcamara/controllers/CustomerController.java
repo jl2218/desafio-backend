@@ -3,6 +3,7 @@ package joao.dev.desafiobackendfcamara.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import joao.dev.desafiobackendfcamara.domain.customer.Customer;
 import joao.dev.desafiobackendfcamara.domain.dtos.CustomerDTO;
 import joao.dev.desafiobackendfcamara.domain.dtos.VehicleDTO;
@@ -25,7 +26,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PostMapping("/register")
-    public ResponseEntity<?> createCustomer(@RequestBody CustomerDTO data) {
+    public ResponseEntity<?> createCustomer(@RequestBody @Valid CustomerDTO data) {
         Customer newCustomer = customerService.createCustomer(data);
         return new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
     }

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import joao.dev.desafiobackendfcamara.domain.dtos.AuthenticationDTO;
 import joao.dev.desafiobackendfcamara.domain.dtos.LoginResponseDTO;
 import joao.dev.desafiobackendfcamara.domain.dtos.RegisterDTO;
@@ -61,8 +62,9 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDTO data) {
-        if (this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
+        if (this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest()
+                .body("Username already registered!");
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.username(), encryptedPassword, data.role());
