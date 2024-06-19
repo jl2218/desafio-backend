@@ -3,7 +3,6 @@ package joao.dev.desafiobackendfcamara.domain.establishment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import joao.dev.desafiobackendfcamara.domain.address.Address;
 import joao.dev.desafiobackendfcamara.domain.dtos.EstablishmentDTO;
 import joao.dev.desafiobackendfcamara.domain.vehicle.Vehicle;
@@ -27,22 +26,13 @@ public class Establishment {
 
     @Id
     private String id;
-    @NotBlank
     private String name;
-    @Column(unique = true)
-    @NotBlank
     private String document;
-    @NotBlank
     private Address address;
-    @Column(unique = true)
-    @NotBlank
     private String phoneNumber;
-    @NotBlank
     private int motorcycleParkingLots;
-    @NotBlank
     private int carParkingLots;
     private List<Vehicle> parkedVehicles = new ArrayList<>();
-    @NotBlank
     private double valuePerHour;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @DBRef
@@ -50,7 +40,7 @@ public class Establishment {
 
     public Establishment(EstablishmentDTO data) {
         this.name = data.name();
-        this.document = data.document();
+        this.document = data.document().replaceAll("[./-]", "");
         this.address = data.address();
         this.phoneNumber = data.phoneNumber();
         this.motorcycleParkingLots = data.motorcycleParkingLots();

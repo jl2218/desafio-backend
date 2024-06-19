@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import joao.dev.desafiobackendfcamara.domain.dtos.AuthenticationDTO;
 import joao.dev.desafiobackendfcamara.domain.dtos.LoginResponseDTO;
 import joao.dev.desafiobackendfcamara.domain.dtos.RegisterDTO;
@@ -47,7 +46,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthenticationDTO data) {
+    public ResponseEntity<?> login(@RequestBody AuthenticationDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
@@ -62,7 +61,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
+    public ResponseEntity<?> register(@RequestBody RegisterDTO data) {
         if (this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());

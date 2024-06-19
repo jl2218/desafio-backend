@@ -3,7 +3,6 @@ package joao.dev.desafiobackendfcamara.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import joao.dev.desafiobackendfcamara.domain.dtos.EstablishmentDTO;
 import joao.dev.desafiobackendfcamara.domain.establishment.Establishment;
 import joao.dev.desafiobackendfcamara.services.EstablishmentService;
@@ -25,7 +24,7 @@ public class EstablishmentController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PostMapping("/register")
-    public ResponseEntity<?> createEstablishment(@RequestBody @Valid EstablishmentDTO data) {
+    public ResponseEntity<?> createEstablishment(@RequestBody EstablishmentDTO data) {
         Establishment newEstablishment = establishmentService.createEstablishment(data);
         return new ResponseEntity<>(newEstablishment, HttpStatus.CREATED);
     }
@@ -46,7 +45,7 @@ public class EstablishmentController {
             @ApiResponse(responseCode = "500", description = "Retorna o erro específico")
     })
     @PutMapping("/update")
-    public ResponseEntity<?> updateEstablishment(@RequestBody @Valid EstablishmentDTO data) {
+    public ResponseEntity<?> updateEstablishment(@RequestBody EstablishmentDTO data) {
         Establishment updatedEstablishment = establishmentService.updateEstablishment(data);
         return new ResponseEntity<>(updatedEstablishment, HttpStatus.OK);
     }

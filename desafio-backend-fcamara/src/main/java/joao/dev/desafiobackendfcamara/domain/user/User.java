@@ -2,7 +2,6 @@ package joao.dev.desafiobackendfcamara.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,13 +17,9 @@ public class User implements UserDetails {
 
     @Id
     private String id;
-    @NotBlank
-    @Column(unique = true)
     private String username;
-    @NotBlank
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    @NotBlank
     private UserRole role;
 
     public User(String username, String password, UserRole role) {
